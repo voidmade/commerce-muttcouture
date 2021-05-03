@@ -19,6 +19,7 @@ const Swatch: FC<Omit<ButtonProps, 'variant'> & Props> = ({
   label,
   variant = 'size',
   active,
+  children,
   ...props
 }) => {
   variant = variant?.toLowerCase()
@@ -36,17 +37,13 @@ const Swatch: FC<Omit<ButtonProps, 'variant'> & Props> = ({
   )
 
   return (
-    <Button
-      className={rootClassName}
-      style={color ? { backgroundColor: color } : {}}
-      aria-label="Variant Swatch"
-      {...props}
-    >
+    <Button aria-label="Variant Swatch" {...props}>
       {variant === 'color' && active && (
         <span>
           <Check />
         </span>
       )}
+      {children}
       {variant === 'size' ? label : null}
     </Button>
   )
