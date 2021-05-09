@@ -42,6 +42,8 @@ const ProductView: FC<Props> = ({ product }) => {
   const [choices, setChoices] = useState<SelectedOptions>({})
   const [currentPrice, setCurrentPrice] = useState(price)
 
+  const [optionsOpen, setOptionsOpen] = useState(true)
+
   const widths = product.options?.find((opt) => opt.displayName === 'Thickness')
   const lengths = product.options?.find((opt) => opt.displayName === 'Size')
 
@@ -161,197 +163,236 @@ const ProductView: FC<Props> = ({ product }) => {
             </Box>
 
             <Box w="100%" bg="#303030" borderRadius="18px" maxW="400px">
-              <VStack
-                spacing="20px"
-                padding="15px"
-                w="100%"
-                border="2px solid #474747"
-                borderTopRadius="18px"
-              >
-                <Heading size="sm" variant="headline">
-                  Customize Your Collar
-                </Heading>
-                {widths &&
-                  widths.values.map((v, i: number) => {
-                    const opt = widths
-                    const currentWidthLabel = v.label
-                    const activeWidth = (choices as any)[
-                      opt.displayName.toLowerCase()
-                    ]
-                    const collarImage = () => {
-                      let image = ''
-                      switch (currentWidthLabel.toLowerCase()) {
-                        case '.75-inch':
-                          image = '/images/collar-sizes-02.svg'
-                          break
-                        case '1-inch':
-                          image = '/images/collar-sizes-05.svg'
-                          break
-                        case '1.5-inch':
-                          image = '/images/collar-sizes-08.svg'
-                          break
-                        case '2-inch':
-                          image = '/images/collar-sizes-11.svg'
-                          break
-                      }
-                      return image
-                    }
-
-                    return (
-                      <VStack
-                        w="100%"
-                        align="start"
-                        spacing="20px"
-                        padding="15px"
-                        borderRadius="10px"
-                        backgroundColor="#474747"
-                        key={`${opt.id}-${i}`}
-                        border={
-                          v.label.toLowerCase() === activeWidth
-                            ? '1px solid #35F89B'
-                            : '1px solid transparent'
+              {optionsOpen && (
+                <VStack
+                  spacing="20px"
+                  padding="15px"
+                  w="100%"
+                  border="2px solid #474747"
+                  borderTopRadius="18px"
+                >
+                  <Heading size="sm" variant="headline">
+                    Customize Your Collar
+                  </Heading>
+                  {widths &&
+                    widths.values.map((v, i: number) => {
+                      const opt = widths
+                      const currentWidthLabel = v.label
+                      const activeWidth = (choices as any)[
+                        opt.displayName.toLowerCase()
+                      ]
+                      const collarImage = () => {
+                        let image = ''
+                        switch (currentWidthLabel.toLowerCase()) {
+                          case '.75-inch':
+                            image = '/images/collar-sizes-02.svg'
+                            break
+                          case '1-inch':
+                            image = '/images/collar-sizes-05.svg'
+                            break
+                          case '1.5-inch':
+                            image = '/images/collar-sizes-08.svg'
+                            break
+                          case '2-inch':
+                            image = '/images/collar-sizes-11.svg'
+                            break
                         }
-                      >
-                        <HStack w="100%">
-                          <Heading size="md" flexShrink="0" mr="2rem">
-                            {v.label} Wide
-                          </Heading>
-                          {collarImage() && (
-                            <Image
-                              src={collarImage()}
-                              height="100"
-                              width="500"
-                              alt=""
-                              objectFit="cover"
-                              objectPosition="left center"
-                            />
-                          )}
-                        </HStack>
+                        return image
+                      }
 
-                        <HStack w="100%">
-                          {lengths &&
-                            lengths.values.map((length, i: number) => {
-                              let buttonLabel = []
-                              const activeLength = (choices as any)[
-                                lengths.displayName.toLowerCase()
-                              ]
-                              const lengthByWidth =
-                                measurementValues[currentWidthLabel]
-                              switch (length.label) {
-                                case 'Small':
-                                  buttonLabel = [lengthByWidth?.sm, 'SM']
-                                  break
-                                case 'Medium':
-                                  buttonLabel = [lengthByWidth?.md, 'MD']
-                                  break
-                                case 'Large':
-                                  buttonLabel = [lengthByWidth?.lg, 'LG']
-                                  break
-                                default:
-                                  return <Box>{length.label}</Box>
-                              }
-                              return (
-                                <Button
-                                  w="100%"
-                                  display="flex"
-                                  alignContent="baseline"
-                                  fontSize="14"
-                                  variant={
-                                    currentWidthLabel.toLowerCase() ===
-                                      activeWidth &&
-                                    length.label.toLowerCase() === activeLength
-                                      ? 'primary'
-                                      : 'tertiary'
-                                  }
-                                  onClick={() => {
-                                    setChoices((choices) => {
-                                      return {
-                                        ...choices,
-                                        [widths.displayName.toLowerCase()]: v.label.toLowerCase(),
-                                        [lengths.displayName.toLowerCase()]: length.label.toLowerCase(),
-                                      }
-                                    })
-                                  }}
-                                >
-                                  {buttonLabel[0]}
-                                  {'" '}
+                      return (
+                        <VStack
+                          w="100%"
+                          align="start"
+                          spacing="20px"
+                          padding="15px"
+                          borderRadius="10px"
+                          backgroundColor="#474747"
+                          key={`${opt.id}-${i}`}
+                          border={
+                            v.label.toLowerCase() === activeWidth
+                              ? '1px solid #35F89B'
+                              : '1px solid transparent'
+                          }
+                        >
+                          <HStack w="100%">
+                            <Heading size="md" flexShrink="0" mr="2rem">
+                              {v.label} Wide
+                            </Heading>
+                            {collarImage() && (
+                              <Image
+                                src={collarImage()}
+                                height="100"
+                                width="500"
+                                alt=""
+                                objectFit="cover"
+                                objectPosition="left center"
+                              />
+                            )}
+                          </HStack>
 
-                                  <Box
-                                    ml="10px"
-                                    fontSize=".7em"
-                                    alignSelf="center"
+                          <HStack w="100%">
+                            {lengths &&
+                              lengths.values.map((length, i: number) => {
+                                let buttonLabel = []
+                                const activeLength = (choices as any)[
+                                  lengths.displayName.toLowerCase()
+                                ]
+                                const lengthByWidth =
+                                  measurementValues[currentWidthLabel]
+                                switch (length.label) {
+                                  case 'Small':
+                                    buttonLabel = [lengthByWidth?.sm, 'SM']
+                                    break
+                                  case 'Medium':
+                                    buttonLabel = [lengthByWidth?.md, 'MD']
+                                    break
+                                  case 'Large':
+                                    buttonLabel = [lengthByWidth?.lg, 'LG']
+                                    break
+                                  default:
+                                    return <Box>{length.label}</Box>
+                                }
+                                return (
+                                  <Button
+                                    w="100%"
+                                    display="flex"
+                                    alignContent="baseline"
+                                    fontSize="14"
+                                    variant={
+                                      currentWidthLabel.toLowerCase() ===
+                                        activeWidth &&
+                                      length.label.toLowerCase() ===
+                                        activeLength
+                                        ? 'primary'
+                                        : 'tertiary'
+                                    }
+                                    onClick={() => {
+                                      setChoices((choices) => {
+                                        return {
+                                          ...choices,
+                                          [widths.displayName.toLowerCase()]: v.label.toLowerCase(),
+                                          [lengths.displayName.toLowerCase()]: length.label.toLowerCase(),
+                                        }
+                                      })
+                                    }}
                                   >
-                                    {buttonLabel[1]}
-                                  </Box>
-                                </Button>
-                              )
-                            })}
-                        </HStack>
-                      </VStack>
-                    )
-                  })}
-                {!widths?.values &&
-                  product.options?.map((opt) => (
-                    <div className="pb-4" key={opt.displayName}>
-                      <h2 className="uppercase font-medium">
-                        {opt.displayName}
-                      </h2>
-                      <div className="flex flex-row py-4">
-                        {opt.values.map((v, i: number) => {
-                          const active = (choices as any)[
-                            opt.displayName.toLowerCase()
-                          ]
+                                    {buttonLabel[0]}
+                                    {'" '}
 
-                          return (
-                            <Swatch
-                              key={`${opt.id}-${i}`}
-                              active={v.label.toLowerCase() === active}
-                              variant={opt.displayName}
-                              color={v.hexColors ? v.hexColors[0] : ''}
-                              label={v.label}
-                              onClick={() => {
-                                setChoices((choices) => {
-                                  return {
-                                    ...choices,
-                                    [opt.displayName.toLowerCase()]: v.label.toLowerCase(),
-                                  }
-                                })
-                              }}
-                            />
-                          )
-                        })}
+                                    <Box
+                                      ml="10px"
+                                      fontSize=".7em"
+                                      alignSelf="center"
+                                    >
+                                      {buttonLabel[1]}
+                                    </Box>
+                                  </Button>
+                                )
+                              })}
+                          </HStack>
+                        </VStack>
+                      )
+                    })}
+                  {!widths?.values &&
+                    product.options?.map((opt) => (
+                      <div className="pb-4" key={opt.displayName}>
+                        <h2 className="uppercase font-medium">
+                          {opt.displayName}
+                        </h2>
+                        <div className="flex flex-row py-4">
+                          {opt.values.map((v, i: number) => {
+                            const active = (choices as any)[
+                              opt.displayName.toLowerCase()
+                            ]
+
+                            return (
+                              <Swatch
+                                key={`${opt.id}-${i}`}
+                                active={v.label.toLowerCase() === active}
+                                variant={opt.displayName}
+                                color={v.hexColors ? v.hexColors[0] : ''}
+                                label={v.label}
+                                onClick={() => {
+                                  setChoices((choices) => {
+                                    return {
+                                      ...choices,
+                                      [opt.displayName.toLowerCase()]: v.label.toLowerCase(),
+                                    }
+                                  })
+                                }}
+                              />
+                            )
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-              </VStack>
+                    ))}
+                </VStack>
+              )}
 
-              <Button
-                aria-label="Add to Bag"
-                onClick={addToCart}
-                disabled={loading}
-                w="100%"
-                variant="primary"
-                size="lg"
-                borderTopRadius="0"
-                borderBottomRadius="18px"
-                py="2rem"
-              >
-                <Flex justifyContent="space-between" flexWrap="nowrap" w="100%">
-                  <Bag />
+              {optionsOpen && (
+                <Button
+                  aria-label="Add to Bag"
+                  onClick={addToCart}
+                  disabled={loading}
+                  w="100%"
+                  variant="primary"
+                  size="lg"
+                  borderTopRadius="0"
+                  borderBottomRadius="18px"
+                  py="2rem"
+                >
                   <Flex
-                    alignContent="baseline"
-                    flexGrow="1"
-                    textAlign="left"
-                    ml="1.5rem"
+                    justifyContent="space-between"
+                    flexWrap="nowrap"
+                    w="100%"
                   >
-                    {' '}
-                    Add to Bag
+                    <Bag />
+                    <Flex
+                      alignContent="baseline"
+                      flexGrow="1"
+                      textAlign="left"
+                      ml="1.5rem"
+                    >
+                      {' '}
+                      Add to Bag
+                    </Flex>
+                    <Flex alignContent="baseline">
+                      {usePrice(currentPrice)?.price}
+                    </Flex>
                   </Flex>
-                  <Flex alignContent="baseline">
-                    {usePrice(currentPrice)?.price}
+                </Button>
+              )}
+              {!optionsOpen && (
+                <Button
+                  aria-label="Customize Collar"
+                  onClick={() => setOptionsOpen(true)}
+                  disabled={loading}
+                  w="100%"
+                  variant="primary"
+                  size="lg"
+                  borderRadius="18px"
+                  py="2rem"
+                >
+                  <Flex
+                    justifyContent="space-between"
+                    flexWrap="nowrap"
+                    w="100%"
+                  >
+                    <Bag />
+                    <Flex
+                      alignContent="baseline"
+                      flexGrow="1"
+                      textAlign="left"
+                      ml="1.5rem"
+                    >
+                      {' '}
+                      Customize Collar
+                    </Flex>
+                    <Flex alignContent="baseline"></Flex>
                   </Flex>
-                </Flex>
-              </Button>
+                </Button>
+              )}
             </Box>
 
             <Box>
