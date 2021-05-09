@@ -33,22 +33,22 @@ export async function getStaticProps({
   params,
   locale,
   preview,
-}: GetStaticPropsContext<{ slug: string }>) {
+}: GetStaticPropsContext<{ handle: string }>) {
   const config = getConfig({ locale })
   const { pages } = await getAllPages({ config, preview })
-  const collectionSlugData = await getProductsByCollectionSlug({
-    variables: { slug: params!.slug, first: 50, imageCount: 2 },
+  const collectionHandleData = await getProductsByCollectionSlug({
+    variables: { slug: params!.handle, first: 50, imageCount: 2 },
     config,
     preview,
   })
 
-  if (!collectionSlugData) {
-    throw new Error(`Product with slug '${params!.slug}' not found`)
+  if (!collectionHandleData) {
+    throw new Error(`Product with handle '${params!.handle}' not found`)
   }
 
   return {
     props: {
-      collectionSlugData,
+      collectionHandleData,
     },
     revalidate: 200,
   }
@@ -61,23 +61,23 @@ export async function getStaticPaths({ locales }: GetStaticPathsContext) {
     paths: locales
       ? locales.reduce<string[]>((arr, locale) => {
           // Add a product path for every locale
-          categories.forEach((collection) => {
+          categories.forEach((collection: { path: any }) => {
             arr.push(`/${locale}/collection${collection.path}`)
           })
           return arr
         }, [])
-      : categories.map((collection) => `/collection${collection.path}`),
+      : categories.map(
+          (collection: { path: any }) => `/collection${collection.path}`
+        ),
     fallback: 'blocking',
   }
 }
 
-export default function Slug({
-  collectionSlugData,
+export default function Handle({
+  collectionHandleData,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
-  const collection = collectionSlugData?.collection
-
-  console.log('collectionSlugData', collection)
+  const collection = collectionHandleData?.collection
   return (
     <PageLayout>
       <VStack spacing={[16, 24, 36]}>
@@ -88,22 +88,23 @@ export default function Slug({
             </VStack>
 
             <Grid
-              templateColumns={['1fr 1fr', null, 'repeat(3, 1fr)']}
+              templateColumns={['1fr 1fr', null, '1fr 1.1fr 1fr']}
+              alignItems="center"
               gap={16}
               w="100%"
             >
               {collection?.products?.edges?.length &&
                 collection.products.edges.length > 0 &&
-                collection.products.edges.map(({ node }, index) => {
-                  const product = normalizeProduct(node)
+                collection.products.edges.map(({ node }, index: number) => {
+                  const product = normalizeProduct(node) || {}
                   const image = product.images[0]
-                  const isBig = index >= 3 && index % 3 == 0
+                  const isBig = index > 0 && index + (1 % 4) == 0
                   return (
                     <LinkBox
-                      gridColumn={isBig ? 'span 3' : null}
+                      gridColumn={isBig ? 'span 3' : ''}
                       w="100%"
                       maxW="800px"
-                      mx={isBig ? 'auto' : null}
+                      mx={isBig ? 'auto' : ''}
                       my={isBig ? [16, 24, 36] : 0}
                     >
                       <VStack
@@ -136,11 +137,11 @@ export default function Slug({
                         </AspectRatio>
                         <HStack align="baseline">
                           <Heading size="md" flexGrow={1}>
-                            <Link href={`collection${product.path}`} passHref>
+                            <Link href={`/product${product.path}`} passHref>
                               <LinkOverlay as="a">{product.name}</LinkOverlay>
                             </Link>
                           </Heading>
-                          <Text>{product?.price?.value}</Text>
+                          <Text>${product?.price?.value}</Text>
                         </HStack>
                       </VStack>
                     </LinkBox>
@@ -158,4 +159,4 @@ export default function Slug({
   )
 }
 
-Slug.Layout = Layout
+Handle.Layout = Layout

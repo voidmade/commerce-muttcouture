@@ -3,7 +3,7 @@ const getSiteCollectionsQuery = /* GraphQL */ `
     collections(first: $first, sortKey: UPDATED_AT) {
       edges {
         node {
-          products(first: 1) {
+          products(first: 4) {
             edges {
               node {
                 id

@@ -23,6 +23,7 @@ import {
   AspectRatio,
 } from '@chakra-ui/react'
 import { Bag } from '@components/icons'
+import PageLayout from '@components/common/PageLayout'
 
 interface Props {
   children?: any
@@ -58,16 +59,18 @@ const ProductView: FC<Props> = ({ product }) => {
   }, [])
 
   useEffect(() => {
-    if (!choices?.thickness) return null
+    if (!choices?.thickness) return
 
     const currentVariant = product.variants.find((v) =>
       v.name.toLowerCase().includes((choices?.thickness).toLowerCase())
     )
-    setCurrentPrice({
-      amount: currentVariant.price,
-      baseAmount: product.price.retailPrice,
-      currencyCode: product.price.currencyCode!,
-    })
+    if (currentVariant && currentVariant?.price) {
+      setCurrentPrice({
+        amount: currentVariant.price,
+        baseAmount: product.price.retailPrice,
+        currencyCode: product.price.currencyCode!,
+      })
+    }
   }, [choices])
 
   const variant = getVariant(product, choices)
@@ -109,7 +112,7 @@ const ProductView: FC<Props> = ({ product }) => {
     },
   }
   return (
-    <Box>
+    <PageLayout>
       <NextSeo
         title={product.name}
         description={product.description}
@@ -129,7 +132,7 @@ const ProductView: FC<Props> = ({ product }) => {
       />
       <Container maxW="container.xl" my="100px">
         <Grid templateColumns={['100%', '2fr 1fr']} gap="3rem" height="100%">
-          <Box>
+          <VStack spacing={8}>
             {product.images.map((image, i) => (
               <div key={image.url} className={s.imageContainer}>
                 <Image
@@ -143,7 +146,7 @@ const ProductView: FC<Props> = ({ product }) => {
                 />
               </div>
             ))}
-          </Box>
+          </VStack>
 
           <VStack spacing="3rem" align="start" position="sticky" top="0px">
             <Heading size="xl" as="h1">
@@ -162,15 +165,9 @@ const ProductView: FC<Props> = ({ product }) => {
               {product.price?.currencyCode}
             </Box>
 
-            <Box w="100%" bg="#303030" borderRadius="18px" maxW="400px">
+            <Box w="100%" bg="gray.50" maxW="400px">
               {optionsOpen && (
-                <VStack
-                  spacing="20px"
-                  padding="15px"
-                  w="100%"
-                  border="2px solid #474747"
-                  borderTopRadius="18px"
-                >
+                <VStack spacing="20px" padding="20px" w="100%">
                   <Heading size="sm" variant="headline">
                     Customize Your Collar
                   </Heading>
@@ -205,33 +202,47 @@ const ProductView: FC<Props> = ({ product }) => {
                           w="100%"
                           align="start"
                           spacing="20px"
-                          padding="15px"
-                          borderRadius="10px"
-                          backgroundColor="#474747"
-                          key={`${opt.id}-${i}`}
+                          cursor="pointer"
                           border={
                             v.label.toLowerCase() === activeWidth
-                              ? '1px solid #35F89B'
-                              : '1px solid transparent'
+                              ? '3px solid black'
+                              : '3px solid transparent'
                           }
+                          backgroundColor="white"
+                          key={`${opt.id}-${i}`}
+                          onClick={() => {
+                            setChoices((choices) => {
+                              return {
+                                ...choices,
+                                [widths.displayName.toLowerCase()]: v.label.toLowerCase(),
+                              }
+                            })
+                          }}
                         >
                           <HStack w="100%">
-                            <Heading size="md" flexShrink="0" mr="2rem">
+                            <Heading
+                              margin="15px"
+                              size="md"
+                              flexShrink={0}
+                              mr="2rem"
+                            >
                               {v.label} Wide
                             </Heading>
                             {collarImage() && (
-                              <Image
-                                src={collarImage()}
-                                height="100"
-                                width="500"
-                                alt=""
-                                objectFit="cover"
-                                objectPosition="left center"
-                              />
+                              <Box marginY="15px" pt="15px">
+                                <Image
+                                  src={collarImage()}
+                                  height="100"
+                                  width="500"
+                                  alt=""
+                                  objectFit="cover"
+                                  objectPosition="left center"
+                                />
+                              </Box>
                             )}
                           </HStack>
 
-                          <HStack w="100%">
+                          <HStack w="100%" padding="0 10px 10px">
                             {lengths &&
                               lengths.values.map((length, i: number) => {
                                 let buttonLabel = []
@@ -264,7 +275,7 @@ const ProductView: FC<Props> = ({ product }) => {
                                         activeWidth &&
                                       length.label.toLowerCase() ===
                                         activeLength
-                                        ? 'primary'
+                                        ? 'secondary'
                                         : 'tertiary'
                                     }
                                     onClick={() => {
@@ -335,12 +346,11 @@ const ProductView: FC<Props> = ({ product }) => {
                   aria-label="Add to Bag"
                   onClick={addToCart}
                   disabled={loading}
-                  w="100%"
+                  w="calc(100% - 4px)"
                   variant="primary"
                   size="lg"
-                  borderTopRadius="0"
-                  borderBottomRadius="18px"
                   py="2rem"
+                  mx="2px"
                 >
                   <Flex
                     justifyContent="space-between"
@@ -401,7 +411,7 @@ const ProductView: FC<Props> = ({ product }) => {
           </VStack>
         </Grid>
       </Container>
-    </Box>
+    </PageLayout>
   )
   return (
     <Container className="max-w-none w-full" clean>

@@ -79,8 +79,20 @@ const theme = extendTheme({
             bg: 'gray.300',
             color: 'gray.900',
           },
+          _focus: {
+            boxShadow: '0 0 3px black',
+          },
         },
-        tertiary: {},
+        secondary: {
+          bg: 'gray.900',
+          color: 'gray.100',
+          border: '2px solid',
+          borderColor: 'gray.900',
+        },
+        tertiary: {
+          border: '2px solid',
+          borderColor: 'gray.300',
+        },
       },
     },
   },

@@ -58,12 +58,16 @@ export default function Home({
   console.log(products, brands, categories)
   const filteredCategories = categories.filter((category) => {
     const blackListedCollections = ['wholesale collection', 'vip']
-    const image = category?.image
+    const isntBlackedlisted = !blackListedCollections.includes(
+      category.name.toLowerCase()
+    )
+    const hasProducts =
+      category?.products?.edges?.length && category.products.edges.length > 3
+    console.log(category.products.edges)
+    const hasImage = category?.image
       ? category.image
       : category?.products?.edges[0]?.node?.images.edges[0].node || null
-    return (
-      !blackListedCollections.includes(category.name.toLowerCase()) && image
-    )
+    return isntBlackedlisted && hasImage && hasProducts
   })
   return (
     <PageLayout>
