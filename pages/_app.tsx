@@ -43,9 +43,10 @@ const theme = extendTheme({
   styles: {
     global: {
       'html, body': {
-        backgroundColor: '#020305',
-        color: 'rgba(255,255,255,.75)',
+        backgroundColor: 'gray.100',
+        color: 'gray.700',
         fontFamily: 'Futura, Futura PT, system-font, Roboto, arial, san-serif',
+        letterSpacing: '.025em',
       },
     },
   },
@@ -53,6 +54,7 @@ const theme = extendTheme({
     Heading: {
       baseStyle: {
         fontFamily: 'inherit',
+        letterSpacing: '.025em',
       },
       variants: {
         Headline: {
@@ -63,30 +65,22 @@ const theme = extendTheme({
     },
     Button: {
       baseStyle: {
-        bg: '#1F1F1F',
+        borderRadius: 0,
         fontSize: '24px',
-        _hover: {
-          bg: 'black',
-        },
       },
       variants: {
         primary: {
-          bg: 'brand.500',
-          border: '1px solid',
-          borderColor: 'brand.400',
-          fontFamily: 'inherit',
+          bg: 'gray.900',
+          color: 'gray.100',
+          border: '2px solid',
+          borderColor: 'gray.300',
+          boxShadow: '0 0 0 3px black',
           _hover: {
-            bg: 'brand.400',
+            bg: 'gray.300',
+            color: 'gray.900',
           },
         },
-        tertiary: {
-          bg: '#1f1f1f',
-          borderColor: 'brand.400',
-          fontFamily: 'inherit',
-          _hover: {
-            bg: 'brand.400',
-          },
-        },
+        tertiary: {},
       },
     },
   },

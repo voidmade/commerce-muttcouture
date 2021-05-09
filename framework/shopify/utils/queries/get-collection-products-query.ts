@@ -1,21 +1,38 @@
 import { productConnection } from './get-all-products-query'
-
 const getCollectionProductsQuery = /* GraphQL */ `
-  query getProductsFromCollection(
-    $categoryId: ID!
-    $first: Int = 250
-    $sortKey: ProductCollectionSortKeys = RELEVANCE
-    $reverse: Boolean = false
-  ) {
-    node(id: $categoryId) {
+  query getCollectionBySlug($slug: String!) {
+    collectionByHandle(handle: $slug) {
       id
-      ... on Collection {
-        products(
-          first: $first
-          sortKey: $sortKey
-          reverse: $reverse
-        ) {
-          ${productConnection}
+      handle
+      title
+      description
+      products(first: 70) {
+        edges {
+          node {
+            id
+            title
+            handle
+            priceRange {
+              maxVariantPrice {
+                amount
+                currencyCode
+              }
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 10) {
+              edges {
+                node {
+                  originalSrc
+                  altText
+                  width
+                  height
+                }
+              }
+            }
+          }
         }
       }
     }

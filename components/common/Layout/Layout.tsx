@@ -60,31 +60,27 @@ const Layout: FC<Props> = ({
   const { locale = 'en-US' } = useRouter()
   return (
     <CommerceProvider locale={locale}>
-      <div className={cn(s.root)}>
-        <Navbar />
-        <main className="fit">{children}</main>
-        <Footer pages={pageProps.pages} />
+      {children}
 
-        <Modal open={displayModal} onClose={closeModal}>
-          {modalView === 'LOGIN_VIEW' && <LoginView />}
-          {modalView === 'SIGNUP_VIEW' && <SignUpView />}
-          {modalView === 'FORGOT_VIEW' && <ForgotPassword />}
-        </Modal>
+      <Modal open={displayModal} onClose={closeModal}>
+        {modalView === 'LOGIN_VIEW' && <LoginView />}
+        {modalView === 'SIGNUP_VIEW' && <SignUpView />}
+        {modalView === 'FORGOT_VIEW' && <ForgotPassword />}
+      </Modal>
 
-        <Sidebar open={displaySidebar} onClose={closeSidebar}>
-          <CartSidebarView />
-        </Sidebar>
+      <Sidebar open={displaySidebar} onClose={closeSidebar}>
+        <CartSidebarView />
+      </Sidebar>
 
-        <FeatureBar
-          title="This site uses cookies to improve your experience. By clicking, you agree to our Privacy Policy."
-          hide={acceptedCookies}
-          action={
-            <Button className="mx-5" onClick={() => onAcceptCookies()}>
-              Accept cookies
-            </Button>
-          }
-        />
-      </div>
+      <FeatureBar
+        title="This site uses cookies to improve your experience. By clicking, you agree to our Privacy Policy."
+        hide={acceptedCookies}
+        action={
+          <Button className="mx-5" onClick={() => onAcceptCookies()}>
+            Accept cookies
+          </Button>
+        }
+      />
     </CommerceProvider>
   )
 }

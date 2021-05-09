@@ -17,10 +17,14 @@ const getCategories = async (config: ShopifyConfig): Promise<Category[]> => {
 
   return (
     data.collections?.edges?.map(
-      ({ node: { id: entityId, title: name, handle } }: CollectionEdge) => ({
+      ({
+        node: { id: entityId, title: name, handle, image, products },
+      }: CollectionEdge) => ({
         entityId,
         name,
         path: `/${handle}`,
+        image,
+        products,
       })
     ) ?? []
   )

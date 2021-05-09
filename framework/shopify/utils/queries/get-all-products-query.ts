@@ -23,6 +23,7 @@ edges {
       edges {
         node {
           originalSrc
+          fullSizeWebP: transformedSrc(preferredContentType: WEBP)
           altText
           width
           height
