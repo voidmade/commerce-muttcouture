@@ -1,16 +1,24 @@
 import cn from 'classnames'
 import s from './Input.module.css'
 import React, { InputHTMLAttributes } from 'react'
+import {
+  ChakraComponent,
+  ChakraProps,
+  Input,
+  FormControl,
+  FormLabel,
+} from '@chakra-ui/react'
 
-export interface Props extends InputHTMLAttributes<HTMLInputElement> {
-  className?: string
+export interface Props extends ChakraProps {
   onChange?: (...args: any[]) => any
+  type?: string
+  placeholder?: string
+  size?: string
+  label?: string
 }
 
-const Input: React.FC<Props> = (props) => {
-  const { className, children, onChange, ...rest } = props
-
-  const rootClassName = cn(s.root, {}, className)
+const CommerceInput: React.FC<Props> = (props) => {
+  const { children, type, label, onChange, ...rest } = props
 
   const handleOnChange = (e: any) => {
     if (onChange) {
@@ -20,9 +28,11 @@ const Input: React.FC<Props> = (props) => {
   }
 
   return (
-    <label>
-      <input
-        className={rootClassName}
+    <FormControl>
+      {label && <FormLabel>{label}</FormLabel>}
+      <Input
+        borderRadius={0}
+        type={type}
         onChange={handleOnChange}
         autoComplete="off"
         autoCorrect="off"
@@ -30,8 +40,8 @@ const Input: React.FC<Props> = (props) => {
         spellCheck="false"
         {...rest}
       />
-    </label>
+    </FormControl>
   )
 }
 
-export default Input
+export default CommerceInput

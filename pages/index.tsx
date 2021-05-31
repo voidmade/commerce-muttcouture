@@ -90,9 +90,12 @@ export default function Home({
           >
             <VStack
               spacing={5}
-              maxW="800px"
-              mx="auto"
+              maxW="50%"
+              mr="auto"
               py={['25px', null, 50, 100]}
+              color="white"
+              align="start"
+              textAlign="left"
             >
               <Heading size="2xl">For Dogs Who Dress Well Too</Heading>
               <Text fontSize="xl">
@@ -100,9 +103,11 @@ export default function Home({
                 strap, the scarf 70 in vintage silk twill offers a boldly modern
                 wearing style.
               </Text>
-              <Button variant="primary" size="lg">
-                Shop Studs
-              </Button>
+              <Link href="/collections/studs" passHref>
+                <Button as="a" variant="primary" size="lg">
+                  Shop Studs
+                </Button>
+              </Link>
             </VStack>
           </Container>
 
@@ -114,7 +119,12 @@ export default function Home({
             maxH="90vh"
             zIndex="1"
           >
-            <Box bg="gray.300"></Box>
+            <Image
+              src="/images/hero.webp"
+              layout="fill"
+              alt=""
+              objectFit="cover"
+            />
           </AspectRatio>
         </Grid>
 
@@ -127,7 +137,9 @@ export default function Home({
                 strap, the scarf 70 in vintage silk twill offers a boldly modern
                 wearing style.
               </Text>
-              <Button>Shop Studs</Button>
+              <Link href="/collections/studs" passHref>
+                <Button as="a">Shop Studs</Button>
+              </Link>
             </VStack>
 
             <Grid
@@ -171,7 +183,7 @@ export default function Home({
                         </Box>
                       </AspectRatio>
                       <Heading size="sm">
-                        <Link href={`collection${category.path}`} passHref>
+                        <Link href={`collections${category.path}`} passHref>
                           <LinkOverlay as="a">{category.name}</LinkOverlay>
                         </Link>
                       </Heading>

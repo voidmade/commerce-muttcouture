@@ -1,8 +1,9 @@
 import { FC, useEffect, useState, useCallback } from 'react'
-import { Logo, Button, Input } from '@components/ui'
+import { Input } from '@components/ui'
 import useLogin from '@framework/auth/use-login'
 import { useUI } from '@components/ui/context'
 import { validate } from 'email-validator'
+import { Box, Button, VStack, HStack, Heading } from '@chakra-ui/react'
 
 interface Props {}
 
@@ -56,47 +57,58 @@ const LoginView: FC<Props> = () => {
   }, [handleValidation])
 
   return (
-    <form
-      onSubmit={handleLogin}
-      className="w-80 flex flex-col justify-between p-3"
-    >
-      <div className="flex justify-center pb-12 ">
-        <Logo width="64px" height="64px" />
-      </div>
-      <div className="flex flex-col space-y-3">
+    <form onSubmit={handleLogin}>
+      <VStack align="left" spacing={8}>
+        <Heading size="lg">Log In</Heading>
         {message && (
-          <div className="text-red border border-red p-3">
+          <Box>
             {message}. Did you {` `}
-            <a
+            <Box
+              as="button"
               className="text-accent-9 inline font-bold hover:underline cursor-pointer"
               onClick={() => setModalView('FORGOT_VIEW')}
             >
               forgot your password?
-            </a>
-          </div>
+            </Box>
+          </Box>
         )}
-        <Input type="email" placeholder="Email" onChange={setEmail} />
-        <Input type="password" placeholder="Password" onChange={setPassword} />
+        <VStack align="left" spacing={4}>
+          <Input
+            label="Email"
+            type="email"
+            placeholder="Email"
+            onChange={setEmail}
+            w="100%"
+            size="lg"
+          />
+          <Input
+            label="Password"
+            type="password"
+            placeholder="Password"
+            onChange={setPassword}
+            w="100%"
+            size="lg"
+          />
 
-        <Button
-          variant="slim"
-          type="submit"
-          loading={loading}
-          disabled={disabled}
-        >
-          Log In
-        </Button>
-        <div className="pt-1 text-center text-sm">
-          <span className="text-accents-7">Don't have an account?</span>
-          {` `}
-          <a
-            className="text-accent-9 font-bold hover:underline cursor-pointer"
-            onClick={() => setModalView('SIGNUP_VIEW')}
+          <Button
+            size="lg"
+            variant="primary"
+            type="submit"
+            loading={loading}
+            disabled={disabled}
           >
+            Log In
+          </Button>
+        </VStack>
+
+        <HStack align="center" justify="center" w="100%" pb={4}>
+          <span>Don't have an account?</span>
+          {` `}
+          <Box as="button" onClick={() => setModalView('SIGNUP_VIEW')}>
             Sign Up
-          </a>
-        </div>
-      </div>
+          </Box>
+        </HStack>
+      </VStack>
     </form>
   )
 }

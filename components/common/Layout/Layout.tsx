@@ -1,10 +1,8 @@
-import cn from 'classnames'
 import dynamic from 'next/dynamic'
-import s from './Layout.module.css'
+
 import { useRouter } from 'next/router'
 import React, { FC } from 'react'
 import { useUI } from '@components/ui/context'
-import { Navbar, Footer } from '@components/common'
 import { useAcceptCookies } from '@lib/hooks/useAcceptCookies'
 import { Sidebar, Button, Modal, LoadingDots } from '@components/ui'
 import CartSidebarView from '@components/cart/CartSidebarView'

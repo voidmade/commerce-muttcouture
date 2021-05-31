@@ -6,7 +6,7 @@ import { FC, useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import { Head } from '@components/common'
 import { ManagedUIContext } from '@components/ui/context'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import { ChakraProvider, extendTheme, LightMode } from '@chakra-ui/react'
 
 const Noop: FC = ({ children }) => <>{children}</>
 
@@ -23,9 +23,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
       <ManagedUIContext>
         <ChakraProvider theme={theme}>
-          <Layout pageProps={pageProps}>
-            <Component {...pageProps} />
-          </Layout>
+          <LightMode>
+            <Layout pageProps={pageProps}>
+              <Component {...pageProps} />
+            </Layout>
+          </LightMode>
         </ChakraProvider>
       </ManagedUIContext>
     </>
@@ -47,6 +49,8 @@ const theme = extendTheme({
         color: 'gray.700',
         fontFamily: 'Futura, Futura PT, system-font, Roboto, arial, san-serif',
         letterSpacing: '.025em',
+        fontWeight: 300,
+        overflowX: 'hidden',
       },
     },
   },
@@ -76,11 +80,15 @@ const theme = extendTheme({
           borderColor: 'gray.300',
           boxShadow: '0 0 0 3px black',
           _hover: {
-            bg: 'gray.300',
-            color: 'gray.900',
+            borderColor: 'gray.900',
           },
           _focus: {
             boxShadow: '0 0 3px black',
+          },
+          _disabled: {
+            bg: 'gray.900',
+            color: 'white',
+            opacity: 0.5,
           },
         },
         secondary: {

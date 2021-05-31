@@ -3,6 +3,8 @@ import type { CommerceAPIConfig } from '@commerce/api'
 import {
   API_URL,
   API_TOKEN,
+  ADMIN_API_URL,
+  ADMIN_API_TOKEN,
   SHOPIFY_CHECKOUT_ID_COOKIE,
   SHOPIFY_CUSTOMER_TOKEN_COOKIE,
 } from '../const'
@@ -51,6 +53,15 @@ const config = new Config({
   fetch: fetchGraphqlApi,
   customerCookie: SHOPIFY_CUSTOMER_TOKEN_COOKIE,
 })
+
+const adminConfig = new Config({
+  commerceUrl: ADMIN_API_URL,
+  apiToken: ADMIN_API_TOKEN!,
+})
+
+export function getAdminConfig(adminConfig?: Partial<ShopifyConfig>) {
+  return config.getConfig(adminConfig)
+}
 
 export function getConfig(userConfig?: Partial<ShopifyConfig>) {
   return config.getConfig(userConfig)

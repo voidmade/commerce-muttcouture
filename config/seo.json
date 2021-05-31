@@ -1,26 +1,26 @@
 {
-  "title": "ACME Storefront | Powered by Next.js Commerce",
-  "titleTemplate": "%s - ACME Storefront",
-  "description": "Next.js Commerce - https://www.nextjs.org/commerce",
+  "title": "Mutt Couture | For Dogs Who Dress Well Too",
+  "titleTemplate": "%s - Mutt Couture",
+  "description": "Mutt Couture - https://www.muttcouture.com",
   "openGraph": {
-    "title": "ACME Storefront | Powered by Next.js Commerce",
-    "description": "Next.js Commerce - https://www.nextjs.org/commerce",
+    "title": "Mutt Couture | For Dogs Who Dress Well Too",
+    "description": "Mutt Couture - https://www.muttcouture.com",
     "type": "website",
     "locale": "en_IE",
-    "url": "https://nextjs.org/commerce",
-    "site_name": "Next.js Commerce",
+    "url": "https://muttcouture.com",
+    "site_name": "Mutt Couture",
     "images": [
       {
         "url": "/card.png",
         "width": 800,
         "height": 600,
-        "alt": "Next.js Commerce"
+        "alt": "Mutt Couture"
       }
     ]
   },
   "twitter": {
-    "handle": "@nextjs",
-    "site": "@nextjs",
+    "handle": "@muttcouture",
+    "site": "@muttcouture",
     "cardType": "summary_large_image"
   }
 }

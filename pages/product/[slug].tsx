@@ -61,6 +61,8 @@ export default function Slug({
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
 
+  console.log('product', product)
+
   return router.isFallback ? (
     <h1>Loading...</h1> // TODO (BC) Add Skeleton Views
   ) : (

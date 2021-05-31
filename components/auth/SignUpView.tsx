@@ -2,8 +2,9 @@ import { FC, useEffect, useState, useCallback } from 'react'
 import { validate } from 'email-validator'
 import { Info } from '@components/icons'
 import { useUI } from '@components/ui/context'
-import { Logo, Button, Input } from '@components/ui'
+import { Input } from '@components/ui'
 import useSignup from '@framework/auth/use-signup'
+import { Box, Button, VStack, HStack, Heading } from '@chakra-ui/react'
 
 interface Props {}
 
@@ -60,6 +61,52 @@ const SignUpView: FC<Props> = () => {
     handleValidation()
   }, [handleValidation])
 
+  return (
+    <form onSubmit={handleSignup}>
+      <VStack align="left" spacing={8}>
+        <Heading size="lg">Sign Up</Heading>
+        {message && (
+          <Box>
+            {message}. Did you {` `}
+            <Box
+              as="button"
+              className="text-accent-9 inline font-bold hover:underline cursor-pointer"
+              onClick={() => setModalView('FORGOT_VIEW')}
+            >
+              forgot your password?
+            </Box>
+          </Box>
+        )}
+        <VStack align="left" spacing={4}>
+          <Input placeholder="First Name" onChange={setFirstName} />
+          <Input placeholder="Last Name" onChange={setLastName} />
+          <Input type="email" placeholder="Email" onChange={setEmail} />
+          <Input
+            type="password"
+            placeholder="Password"
+            onChange={setPassword}
+          />
+
+          <Button
+            size="lg"
+            variant="primary"
+            type="submit"
+            loading={loading}
+            disabled={disabled}
+          >
+            Sign Up
+          </Button>
+        </VStack>
+
+        <HStack align="center" justify="center" w="100%" pb={4}>
+          <span>Have an account?</span>{' '}
+          <Box as="button" onClick={() => setModalView('LOGIN_VIEW')}>
+            Log In
+          </Box>
+        </HStack>
+      </VStack>
+    </form>
+  )
   return (
     <form
       onSubmit={handleSignup}

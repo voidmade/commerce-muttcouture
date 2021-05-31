@@ -15,6 +15,16 @@ import {
   enableBodyScroll,
   clearAllBodyScrollLocks,
 } from 'body-scroll-lock'
+import {
+  Menu,
+  MenuList,
+  MenuGroup,
+  MenuItem,
+  MenuButton,
+  useColorMode,
+  Button,
+  MenuDivider,
+} from '@chakra-ui/react'
 
 interface DropdownMenuProps {
   open?: boolean
@@ -38,87 +48,36 @@ const LINKS = [
 const DropdownMenu: FC<DropdownMenuProps> = ({ open = false }) => {
   const logout = useLogout()
   const { pathname } = useRouter()
-  const { theme, setTheme } = useTheme()
-  const [display, setDisplay] = useState(false)
+
   const { closeSidebarIfPresent } = useUI()
   const ref = useRef() as React.MutableRefObject<HTMLUListElement>
-
-  useEffect(() => {
-    if (ref.current) {
-      if (display) {
-        disableBodyScroll(ref.current)
-      } else {
-        enableBodyScroll(ref.current)
-      }
-    }
-    return () => {
-      clearAllBodyScrollLocks()
-    }
-  }, [display])
+  const { colorMode, toggleColorMode } = useColorMode()
 
   return (
-    <ClickOutside active={display} onClick={() => setDisplay(false)}>
-      <div>
-        <button
-          className={s.avatarButton}
-          onClick={() => setDisplay(!display)}
-          aria-label="Menu"
-        >
-          <Avatar />
-        </button>
-        {display && (
-          <ul className={s.dropdownMenu} ref={ref}>
-            {LINKS.map(({ name, href }) => (
-              <li key={href}>
-                <div>
-                  <Link href={href}>
-                    <a
-                      className={cn(s.link, {
-                        [s.active]: pathname === href,
-                      })}
-                      onClick={() => {
-                        setDisplay(false)
-                        closeSidebarIfPresent()
-                      }}
-                    >
-                      {name}
-                    </a>
-                  </Link>
-                </div>
-              </li>
-            ))}
-            <li>
-              <a
-                className={cn(s.link, 'justify-between')}
-                onClick={() => {
-                  theme === 'dark' ? setTheme('light') : setTheme('dark')
-                  setDisplay(false)
-                }}
-              >
-                <div>
-                  Theme: <strong>{theme}</strong>{' '}
-                </div>
-                <div className="ml-3">
-                  {theme == 'dark' ? (
-                    <Moon width={20} height={20} />
-                  ) : (
-                    <Sun width="20" height={20} />
-                  )}
-                </div>
-              </a>
-            </li>
-            <li>
-              <a
-                className={cn(s.link, 'border-t border-accents-2 mt-4')}
-                onClick={() => logout()}
-              >
-                Logout
-              </a>
-            </li>
-          </ul>
-        )}
-      </div>
-    </ClickOutside>
+    <Menu placement="bottom-end">
+      <MenuButton aria-label="Menu">
+        <Avatar />
+      </MenuButton>
+      <MenuList>
+        <MenuGroup>
+          {LINKS.map(({ name, href }) => (
+            <MenuItem key={href}>
+              <Link href={href} passHref>
+                <a
+                  onClick={() => {
+                    closeSidebarIfPresent()
+                  }}
+                >
+                  {name}
+                </a>
+              </Link>
+            </MenuItem>
+          ))}
+          <MenuDivider />
+          <MenuItem onClick={() => logout()}>Logout</MenuItem>
+        </MenuGroup>
+      </MenuList>
+    </Menu>
   )
 }
 

@@ -4,27 +4,34 @@ import { NextSeo } from 'next-seo'
 import { FC, useEffect, useState } from 'react'
 import s from './ProductView.module.css'
 import { Swatch, ProductSlider } from '@components/product'
-import { Text, useUI } from '@components/ui'
+import { useUI } from '@components/ui'
 import type { Product } from '@commerce/types'
 import usePrice from '@framework/product/use-price'
 import { useAddItem } from '@framework/cart'
 import { getVariant, SelectedOptions } from '../helpers'
 import WishlistButton from '@components/wishlist/WishlistButton'
+import { Bag } from '@components/icons'
 
 import {
   Box,
   Container,
   Grid,
   Heading,
-  HStack,
   VStack,
   Button,
   Flex,
+  Text,
+  useBreakpointValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  useDisclosure,
   AspectRatio,
 } from '@chakra-ui/react'
-import { Bag } from '@components/icons'
-import PageLayout from '@components/common/PageLayout'
 
+import PageLayout from '@components/common/PageLayout'
+import ProductOptions from '@components/product/ProductOptions'
+import { AnimateSharedLayout } from 'framer-motion'
 interface Props {
   children?: any
   product: Product
@@ -32,6 +39,11 @@ interface Props {
 }
 
 const ProductView: FC<Props> = ({ product }) => {
+  const {
+    isModalOpen: isOpen,
+    onModalOpen: onOpen,
+    onModalClose: onClose,
+  } = useDisclosure()
   const addItem = useAddItem()
   const price = {
     amount: product.price.value,
@@ -42,11 +54,11 @@ const ProductView: FC<Props> = ({ product }) => {
   const [loading, setLoading] = useState(false)
   const [choices, setChoices] = useState<SelectedOptions>({})
   const [currentPrice, setCurrentPrice] = useState(price)
-
-  const [optionsOpen, setOptionsOpen] = useState(true)
-
+  const [optionsOpen, setOptionsOpen] = useState(false)
   const widths = product.options?.find((opt) => opt.displayName === 'Thickness')
   const lengths = product.options?.find((opt) => opt.displayName === 'Size')
+
+  const variant = getVariant(product, choices)
 
   useEffect(() => {
     // Selects the default option
@@ -72,8 +84,7 @@ const ProductView: FC<Props> = ({ product }) => {
       })
     }
   }, [choices])
-
-  const variant = getVariant(product, choices)
+  const currentPriceFormatted = usePrice(currentPrice)
 
   const addToCart = async () => {
     setLoading(true)
@@ -84,35 +95,149 @@ const ProductView: FC<Props> = ({ product }) => {
       })
       openSidebar()
       setLoading(false)
+      setOptionsOpen(false)
     } catch (err) {
       setLoading(false)
     }
   }
-
-  const measurementValues = {
-    '.75-Inch': {
-      sm: '5.75 - 8',
-      md: '8.75 - 11',
-      lg: '11.75 - 14',
-    },
-    '1-Inch': {
-      sm: '11 - 14',
-      md: '15 - 18',
-      lg: '19-22',
-    },
-    '1.5-Inch': {
-      sm: '13 - 16',
-      md: '17 - 20',
-      lg: '21 - 24',
-    },
-    '2-Inch': {
-      sm: '15 - 18',
-      md: '19 - 22',
-      lg: '23 - 26',
-    },
-  }
   return (
     <PageLayout>
+      <Container maxW="container.xl" my="100px">
+        <Grid
+          templateColumns={['100%', null, null, '2fr 1fr']}
+          gap="3rem"
+          height="100%"
+        >
+          <Box
+            display="flex"
+            flexDirection={['row', null, null, 'column']}
+            spacing={[0, null, 8]}
+            overflowX={['scroll', null, null, 'auto']}
+            style={{
+              'scroll-snap-type': 'x mandatory',
+            }}
+          >
+            {product.images.map((image, i) => (
+              <Box
+                key={image.url}
+                style={{ 'scroll-snap-align': 'center' }}
+                w={['100vw', null, null, '100%']}
+                flexShrink={0}
+                mb={[null, null, null, 8]}
+              >
+                <AspectRatio ratio={4 / 3}>
+                  <Image
+                    className={s.img}
+                    src={image.url!}
+                    alt={image.alt || 'Product Image'}
+                    layout="fill"
+                    priority={i === 0}
+                    quality="85"
+                  />
+                </AspectRatio>
+              </Box>
+            ))}
+          </Box>
+
+          <VStack spacing={12} align="start" position="sticky" top="0px">
+            <VStack align="start" w="100%" spacing={6}>
+              <Heading size="xl" as="h1">
+                {product.name}
+              </Heading>
+              <Box>
+                {process.env.COMMERCE_WISHLIST_ENABLED && (
+                  <WishlistButton
+                    className={s.wishlistButton}
+                    productId={product.id}
+                    variant={product.variants[0]! as any}
+                  />
+                )}
+                {currentPriceFormatted?.price}
+                {` `}
+                {product.price?.currencyCode}
+              </Box>
+              <Text>{product.description}</Text>
+            </VStack>
+
+            {useBreakpointValue({
+              base: (
+                <AnimateSharedLayout>
+                  {!optionsOpen && (
+                    <Button
+                      aria-label="Customize Collar"
+                      onClick={() => setOptionsOpen(true)}
+                      disabled={loading}
+                      w="100%"
+                      variant="primary"
+                      size="lg"
+                      py="2rem"
+                      layoutId="product-cta"
+                    >
+                      <Flex
+                        justifyContent="space-between"
+                        flexWrap="nowrap"
+                        w="100%"
+                      >
+                        <Bag />
+                        <Flex
+                          alignContent="baseline"
+                          flexGrow={1}
+                          textAlign="left"
+                          ml="1.5rem"
+                        >
+                          {' '}
+                          Customize Collar
+                        </Flex>
+                        <Flex alignContent="baseline"></Flex>
+                      </Flex>
+                    </Button>
+                  )}
+                  <Modal isOpen={optionsOpen} onClose={onClose} size="full">
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ProductOptions
+                        addToCart={addToCart}
+                        widths={widths}
+                        lengths={lengths}
+                        setChoices={setChoices}
+                        choices={choices}
+                        currentPriceFormatted={currentPriceFormatted}
+                        loading={loading}
+                        optionsOpen={optionsOpen}
+                        setOptionsOpen={setOptionsOpen}
+                      />
+                    </ModalContent>
+                  </Modal>
+                </AnimateSharedLayout>
+              ),
+              lg: (
+                <ProductOptions
+                  addToCart={addToCart}
+                  widths={widths}
+                  lengths={lengths}
+                  setChoices={setChoices}
+                  choices={choices}
+                  currentPriceFormatted={currentPriceFormatted}
+                  loading={loading}
+                  optionsOpen={optionsOpen}
+                  setOptionsOpen={setOptionsOpen}
+                />
+              ),
+            })}
+          </VStack>
+        </Grid>
+        <Box>
+          <div
+            id="stamped-main-widget"
+            data-widget-style="standard"
+            data-product-id="172077533"
+            data-name={product.title}
+            data-url="{{ shop.url }}{{ product.url }}"
+            data-product-sku={product.handle}
+            data-product-type={product.type}
+          ></div>
+        </Box>
+      </Container>
       <NextSeo
         title={product.name}
         description={product.description}
@@ -130,287 +255,6 @@ const ProductView: FC<Props> = ({ product }) => {
           ],
         }}
       />
-      <Container maxW="container.xl" my="100px">
-        <Grid templateColumns={['100%', '2fr 1fr']} gap="3rem" height="100%">
-          <VStack spacing={8}>
-            {product.images.map((image, i) => (
-              <div key={image.url} className={s.imageContainer}>
-                <Image
-                  className={s.img}
-                  src={image.url!}
-                  alt={image.alt || 'Product Image'}
-                  width={1050}
-                  height={1050}
-                  priority={i === 0}
-                  quality="85"
-                />
-              </div>
-            ))}
-          </VStack>
-
-          <VStack spacing="3rem" align="start" position="sticky" top="0px">
-            <Heading size="xl" as="h1">
-              {product.name}
-            </Heading>
-            <Box>
-              {process.env.COMMERCE_WISHLIST_ENABLED && (
-                <WishlistButton
-                  className={s.wishlistButton}
-                  productId={product.id}
-                  variant={product.variants[0]! as any}
-                />
-              )}
-              {usePrice(currentPrice)?.price}
-              {` `}
-              {product.price?.currencyCode}
-            </Box>
-
-            <Box w="100%" bg="gray.50" maxW="400px">
-              {optionsOpen && (
-                <VStack spacing="20px" padding="20px" w="100%">
-                  <Heading size="sm" variant="headline">
-                    Customize Your Collar
-                  </Heading>
-                  {widths &&
-                    widths.values.map((v, i: number) => {
-                      const opt = widths
-                      const currentWidthLabel = v.label
-                      const activeWidth = (choices as any)[
-                        opt.displayName.toLowerCase()
-                      ]
-                      const collarImage = () => {
-                        let image = ''
-                        switch (currentWidthLabel.toLowerCase()) {
-                          case '.75-inch':
-                            image = '/images/collar-sizes-02.svg'
-                            break
-                          case '1-inch':
-                            image = '/images/collar-sizes-05.svg'
-                            break
-                          case '1.5-inch':
-                            image = '/images/collar-sizes-08.svg'
-                            break
-                          case '2-inch':
-                            image = '/images/collar-sizes-11.svg'
-                            break
-                        }
-                        return image
-                      }
-
-                      return (
-                        <VStack
-                          w="100%"
-                          align="start"
-                          spacing="20px"
-                          cursor="pointer"
-                          border={
-                            v.label.toLowerCase() === activeWidth
-                              ? '3px solid black'
-                              : '3px solid transparent'
-                          }
-                          backgroundColor="white"
-                          key={`${opt.id}-${i}`}
-                          onClick={() => {
-                            setChoices((choices) => {
-                              return {
-                                ...choices,
-                                [widths.displayName.toLowerCase()]: v.label.toLowerCase(),
-                              }
-                            })
-                          }}
-                        >
-                          <HStack w="100%">
-                            <Heading
-                              margin="15px"
-                              size="md"
-                              flexShrink={0}
-                              mr="2rem"
-                            >
-                              {v.label} Wide
-                            </Heading>
-                            {collarImage() && (
-                              <Box marginY="15px" pt="15px">
-                                <Image
-                                  src={collarImage()}
-                                  height="100"
-                                  width="500"
-                                  alt=""
-                                  objectFit="cover"
-                                  objectPosition="left center"
-                                />
-                              </Box>
-                            )}
-                          </HStack>
-
-                          <HStack w="100%" padding="0 10px 10px">
-                            {lengths &&
-                              lengths.values.map((length, i: number) => {
-                                let buttonLabel = []
-                                const activeLength = (choices as any)[
-                                  lengths.displayName.toLowerCase()
-                                ]
-                                const lengthByWidth =
-                                  measurementValues[currentWidthLabel]
-                                switch (length.label) {
-                                  case 'Small':
-                                    buttonLabel = [lengthByWidth?.sm, 'SM']
-                                    break
-                                  case 'Medium':
-                                    buttonLabel = [lengthByWidth?.md, 'MD']
-                                    break
-                                  case 'Large':
-                                    buttonLabel = [lengthByWidth?.lg, 'LG']
-                                    break
-                                  default:
-                                    return <Box>{length.label}</Box>
-                                }
-                                return (
-                                  <Button
-                                    w="100%"
-                                    display="flex"
-                                    alignContent="baseline"
-                                    fontSize="14"
-                                    variant={
-                                      currentWidthLabel.toLowerCase() ===
-                                        activeWidth &&
-                                      length.label.toLowerCase() ===
-                                        activeLength
-                                        ? 'secondary'
-                                        : 'tertiary'
-                                    }
-                                    onClick={() => {
-                                      setChoices((choices) => {
-                                        return {
-                                          ...choices,
-                                          [widths.displayName.toLowerCase()]: v.label.toLowerCase(),
-                                          [lengths.displayName.toLowerCase()]: length.label.toLowerCase(),
-                                        }
-                                      })
-                                    }}
-                                  >
-                                    {buttonLabel[0]}
-                                    {'" '}
-
-                                    <Box
-                                      ml="10px"
-                                      fontSize=".7em"
-                                      alignSelf="center"
-                                    >
-                                      {buttonLabel[1]}
-                                    </Box>
-                                  </Button>
-                                )
-                              })}
-                          </HStack>
-                        </VStack>
-                      )
-                    })}
-                  {!widths?.values &&
-                    product.options?.map((opt) => (
-                      <div className="pb-4" key={opt.displayName}>
-                        <h2 className="uppercase font-medium">
-                          {opt.displayName}
-                        </h2>
-                        <div className="flex flex-row py-4">
-                          {opt.values.map((v, i: number) => {
-                            const active = (choices as any)[
-                              opt.displayName.toLowerCase()
-                            ]
-
-                            return (
-                              <Swatch
-                                key={`${opt.id}-${i}`}
-                                active={v.label.toLowerCase() === active}
-                                variant={opt.displayName}
-                                color={v.hexColors ? v.hexColors[0] : ''}
-                                label={v.label}
-                                onClick={() => {
-                                  setChoices((choices) => {
-                                    return {
-                                      ...choices,
-                                      [opt.displayName.toLowerCase()]: v.label.toLowerCase(),
-                                    }
-                                  })
-                                }}
-                              />
-                            )
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                </VStack>
-              )}
-
-              {optionsOpen && (
-                <Button
-                  aria-label="Add to Bag"
-                  onClick={addToCart}
-                  disabled={loading}
-                  w="calc(100% - 4px)"
-                  variant="primary"
-                  size="lg"
-                  py="2rem"
-                  mx="2px"
-                >
-                  <Flex
-                    justifyContent="space-between"
-                    flexWrap="nowrap"
-                    w="100%"
-                  >
-                    <Bag />
-                    <Flex
-                      alignContent="baseline"
-                      flexGrow="1"
-                      textAlign="left"
-                      ml="1.5rem"
-                    >
-                      {' '}
-                      Add to Bag
-                    </Flex>
-                    <Flex alignContent="baseline">
-                      {usePrice(currentPrice)?.price}
-                    </Flex>
-                  </Flex>
-                </Button>
-              )}
-              {!optionsOpen && (
-                <Button
-                  aria-label="Customize Collar"
-                  onClick={() => setOptionsOpen(true)}
-                  disabled={loading}
-                  w="100%"
-                  variant="primary"
-                  size="lg"
-                  borderRadius="18px"
-                  py="2rem"
-                >
-                  <Flex
-                    justifyContent="space-between"
-                    flexWrap="nowrap"
-                    w="100%"
-                  >
-                    <Bag />
-                    <Flex
-                      alignContent="baseline"
-                      flexGrow="1"
-                      textAlign="left"
-                      ml="1.5rem"
-                    >
-                      {' '}
-                      Customize Collar
-                    </Flex>
-                    <Flex alignContent="baseline"></Flex>
-                  </Flex>
-                </Button>
-              )}
-            </Box>
-
-            <Box>
-              <Text html={product.descriptionHtml || product.description} />
-            </Box>
-          </VStack>
-        </Grid>
-      </Container>
     </PageLayout>
   )
   return (

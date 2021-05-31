@@ -8,7 +8,7 @@ import { Avatar } from '@components/common'
 import { Heart, Bag } from '@components/icons'
 import { useUI } from '@components/ui/context'
 import DropdownMenu from './DropdownMenu'
-import s from './UserNav.module.css'
+import { Box, Button, Badge, HStack } from '@chakra-ui/react'
 
 interface Props {
   className?: string
@@ -22,39 +22,61 @@ const UserNav: FC<Props> = ({ className }) => {
   const { toggleSidebar, closeSidebarIfPresent, openModal } = useUI()
   const itemsCount = data?.lineItems.reduce(countItem, 0) ?? 0
 
+  console.log('customer', customer)
   return (
-    <nav className={cn(s.root, className)}>
-      <div className={s.mainContainer}>
-        <ul className={s.list}>
-          <li className={s.item} onClick={toggleSidebar}>
-            <Bag />
-            {itemsCount > 0 && <span className={s.bagCount}>{itemsCount}</span>}
-          </li>
-          {process.env.COMMERCE_WISHLIST_ENABLED && (
-            <li className={s.item}>
-              <Link href="/wishlist">
-                <a onClick={closeSidebarIfPresent} aria-label="Wishlist">
-                  <Heart />
-                </a>
-              </Link>
-            </li>
+    <Box>
+      <HStack>
+        {customer && customer?.acceptsMarketing && (
+          <Link href="/collections/vip" passHref>
+            <Button as="a" variant="ghost" color="gray.900">
+              VIP
+            </Button>
+          </Link>
+        )}
+        <Button variant="link" onClick={toggleSidebar} color="gray.900">
+          <Bag />
+          {itemsCount > 0 && (
+            <Badge
+              position="absolute"
+              top="0"
+              right="0"
+              transform="translateY(-25%) translateX(-10%)"
+              colorScheme="red"
+              variant="solid"
+            >
+              {itemsCount}
+            </Badge>
           )}
-          <li className={s.item}>
-            {customer ? (
-              <DropdownMenu />
-            ) : (
-              <button
-                className={s.avatarButton}
-                aria-label="Menu"
-                onClick={() => openModal()}
-              >
-                <Avatar />
-              </button>
-            )}
-          </li>
-        </ul>
-      </div>
-    </nav>
+        </Button>
+
+        {process.env.COMMERCE_WISHLIST_ENABLED && (
+          <Link href="/wishlist" passHref>
+            <Button
+              variant="link"
+              color="gray.900"
+              as="a"
+              onClick={closeSidebarIfPresent}
+              aria-label="Wishlist"
+            >
+              <Heart />
+            </Button>
+          </Link>
+        )}
+
+        {customer ? (
+          <DropdownMenu />
+        ) : (
+          <Button
+            variant="link"
+            color="gray.900"
+            aria-label="Menu"
+            onClick={() => openModal()}
+          >
+            <Avatar />
+          </Button>
+        )}
+      </HStack>
+    </Box>
   )
 }
 

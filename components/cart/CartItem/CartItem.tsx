@@ -97,6 +97,8 @@ const CartItem = ({
           <Image
             onClick={() => closeSidebarIfPresent()}
             className={s.productImage}
+            objectFit="contain"
+            objectPosition="center"
             width={150}
             height={150}
             src={item.variant.image!.url}

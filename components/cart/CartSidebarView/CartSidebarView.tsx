@@ -3,7 +3,7 @@ import cn from 'classnames'
 import Link from 'next/link'
 import CartItem from '../CartItem'
 import s from './CartSidebarView.module.css'
-import { Button } from '@components/ui'
+import { Button } from '@chakra-ui/react'
 import { UserNav } from '@components/common'
 import { useUI } from '@components/ui/context'
 import { Bag, Cross, Check } from '@components/icons'
@@ -128,7 +128,13 @@ const CartSidebarView: FC = () => {
                 <span>{total}</span>
               </div>
             </div>
-            <Button href="/checkout" Component="a" width="100%">
+            <Button
+              href="/checkout"
+              as="a"
+              width="100%"
+              variant="primary"
+              size="lg"
+            >
               Proceed to Checkout
             </Button>
           </div>

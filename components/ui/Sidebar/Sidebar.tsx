@@ -6,6 +6,7 @@ import {
   enableBodyScroll,
   clearAllBodyScrollLocks,
 } from 'body-scroll-lock'
+import { Modal, ModalContent } from '@chakra-ui/modal'
 
 interface Props {
   children: any
@@ -14,41 +15,17 @@ interface Props {
 }
 
 const Sidebar: FC<Props> = ({ children, open = false, onClose }) => {
-  const ref = useRef() as React.MutableRefObject<HTMLDivElement>
-
-  useEffect(() => {
-    if (ref.current) {
-      if (open) {
-        disableBodyScroll(ref.current)
-      } else {
-        enableBodyScroll(ref.current)
-      }
-    }
-    return () => {
-      clearAllBodyScrollLocks()
-    }
-  }, [open])
-
   return (
-    <Portal>
-      {open ? (
-        <div className={s.root} ref={ref}>
-          <div className="absolute inset-0 overflow-hidden">
-            <div
-              className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
-              onClick={onClose}
-            />
-            <section className="absolute inset-y-0 right-0 pl-10 max-w-full flex sm:pl-16 outline-none">
-              <div className="h-full md:w-screen md:max-w-md">
-                <div className="h-full flex flex-col text-base bg-accents-1 shadow-xl overflow-y-auto">
-                  {children}
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-      ) : null}
-    </Portal>
+    <Modal
+      isOpen={open}
+      onClose={onClose}
+      motionPreset="slideInRight"
+      size="full"
+    >
+      <ModalContent bottom="0" ml="auto" mt="0" w="90vw" maxW="400px">
+        {children}
+      </ModalContent>
+    </Modal>
   )
 }
 
