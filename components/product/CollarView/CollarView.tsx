@@ -2,7 +2,6 @@ import cn from 'classnames'
 import Image from 'next/image'
 import { NextSeo } from 'next-seo'
 import { FC, useEffect, useState } from 'react'
-import s from './ProductView.module.css'
 import { Swatch, ProductSlider } from '@components/product'
 import { useUI } from '@components/ui'
 import type { Product } from '@commerce/types'
@@ -19,12 +18,20 @@ import {
   Heading,
   VStack,
   Button,
+  Flex,
   Text,
+  useBreakpointValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  useDisclosure,
   AspectRatio,
   HStack,
 } from '@chakra-ui/react'
 
 import PageLayout from '@components/common/PageLayout'
+import ProductOptions from '@components/product/ProductOptions'
+import { AnimateSharedLayout } from 'framer-motion'
 interface Props {
   children?: any
   product: Product
@@ -33,6 +40,11 @@ interface Props {
 
 const ProductView: FC<Props> = ({ product }) => {
   console.log('product', product)
+  const {
+    isModalOpen: isOpen,
+    onModalOpen: onOpen,
+    onModalClose: onClose,
+  } = useDisclosure()
   const addItem = useAddItem()
   const price = {
     amount: product.price.value,
@@ -43,6 +55,9 @@ const ProductView: FC<Props> = ({ product }) => {
   const [loading, setLoading] = useState(false)
   const [choices, setChoices] = useState<SelectedOptions>({})
   const [currentPrice, setCurrentPrice] = useState(price)
+  const [optionsOpen, setOptionsOpen] = useState(false)
+  const widths = product.options?.find((opt) => opt.displayName === 'Thickness')
+  const lengths = product.options?.find((opt) => opt.displayName === 'Size')
 
   const variant = getVariant(product, choices)
 
@@ -57,15 +72,19 @@ const ProductView: FC<Props> = ({ product }) => {
   }, [])
 
   useEffect(() => {
-    console.log('variant', variant)
-    if (variant && variant?.price) {
+    if (!choices?.thickness) return
+
+    const currentVariant = product.variants.find((v) =>
+      v.name.toLowerCase().includes((choices?.thickness).toLowerCase())
+    )
+    if (currentVariant && currentVariant?.price) {
       setCurrentPrice({
-        amount: variant.price,
+        amount: currentVariant.price,
         baseAmount: product.price.retailPrice,
         currencyCode: product.price.currencyCode!,
       })
     }
-  }, [variant])
+  }, [choices])
   const currentPriceFormatted = usePrice(currentPrice)
 
   const addToCart = async () => {
@@ -77,6 +96,7 @@ const ProductView: FC<Props> = ({ product }) => {
       })
       openSidebar()
       setLoading(false)
+      setOptionsOpen(false)
     } catch (err) {
       setLoading(false)
     }
@@ -108,7 +128,6 @@ const ProductView: FC<Props> = ({ product }) => {
               >
                 <AspectRatio ratio={4 / 3}>
                   <Image
-                    className={s.img}
                     src={image.url!}
                     alt={image.alt || 'Product Image'}
                     layout="fill"
@@ -128,7 +147,6 @@ const ProductView: FC<Props> = ({ product }) => {
               <Box>
                 {process.env.COMMERCE_WISHLIST_ENABLED && (
                   <WishlistButton
-                    className={s.wishlistButton}
                     productId={product.id}
                     variant={product.variants[0]! as any}
                   />
@@ -146,62 +164,77 @@ const ProductView: FC<Props> = ({ product }) => {
                 }
               >
                 <Text fontSize="xs">Genuine Leather</Text>
+
                 <Text fontSize="xs">Metal Hardware</Text>
                 <Text fontSize="xs">Shipped from California</Text>
               </HStack>
             </VStack>
 
-            <VStack w="100%" spacing={4}>
-              {product.options?.map((opt) => (
-                <VStack key={opt.displayName} w="100%">
-                  {opt.displayName.toLowerCase() !== 'title' && (
-                    <h2 className="uppercase font-medium">{opt.displayName}</h2>
-                  )}
-                  <HStack w="100%">
-                    {opt.values.map((v, i: number) => {
-                      const active = (choices as any)[
-                        opt.displayName.toLowerCase()
-                      ]
-
-                      return (
-                        <Button
-                          key={`${opt.id}-${i}`}
-                          variant={
-                            v.label.toLowerCase() === active
-                              ? 'secondary'
-                              : 'tertiary'
-                          }
-                          label={v.label}
-                          w="100%"
-                          onClick={() => {
-                            setChoices((choices) => {
-                              return {
-                                ...choices,
-                                [opt.displayName.toLowerCase()]: v.label.toLowerCase(),
-                              }
-                            })
-                          }}
+            {useBreakpointValue({
+              base: (
+                <AnimateSharedLayout>
+                  {!optionsOpen && (
+                    <Button
+                      aria-label="Customize Collar"
+                      onClick={() => setOptionsOpen(true)}
+                      disabled={loading}
+                      w="100%"
+                      variant="primary"
+                      size="lg"
+                      py="2rem"
+                      layoutId="product-cta"
+                    >
+                      <Flex
+                        justifyContent="space-between"
+                        flexWrap="nowrap"
+                        w="100%"
+                      >
+                        <Bag />
+                        <Flex
+                          alignContent="baseline"
+                          flexGrow={1}
+                          textAlign="left"
+                          ml="1.5rem"
                         >
-                          {v.label}
-                        </Button>
-                      )
-                    })}
-                  </HStack>
-                </VStack>
-              ))}
-              <Button
-                variant="primary"
-                w="100%"
-                size="lg"
-                aria-label="Add to Bag"
-                onClick={addToCart}
-                disabled={loading}
-              >
-                <HStack w="100%" justify="space-between">
-                  <Box>Add to Bag</Box> <Box>{currentPriceFormatted.price}</Box>
-                </HStack>
-              </Button>
-            </VStack>
+                          {' '}
+                          Customize Collar
+                        </Flex>
+                        <Flex alignContent="baseline"></Flex>
+                      </Flex>
+                    </Button>
+                  )}
+                  <Modal isOpen={optionsOpen} onClose={onClose} size="full">
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ProductOptions
+                        addToCart={addToCart}
+                        widths={widths}
+                        lengths={lengths}
+                        setChoices={setChoices}
+                        choices={choices}
+                        currentPriceFormatted={currentPriceFormatted}
+                        loading={loading}
+                        optionsOpen={optionsOpen}
+                        setOptionsOpen={setOptionsOpen}
+                      />
+                    </ModalContent>
+                  </Modal>
+                </AnimateSharedLayout>
+              ),
+              lg: (
+                <ProductOptions
+                  addToCart={addToCart}
+                  widths={widths}
+                  lengths={lengths}
+                  setChoices={setChoices}
+                  choices={choices}
+                  currentPriceFormatted={currentPriceFormatted}
+                  loading={loading}
+                  optionsOpen={optionsOpen}
+                  setOptionsOpen={setOptionsOpen}
+                />
+              ),
+            })}
           </VStack>
         </Grid>
         <Box>

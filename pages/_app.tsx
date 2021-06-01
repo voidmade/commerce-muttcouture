@@ -47,7 +47,8 @@ const theme = extendTheme({
       'html, body': {
         backgroundColor: 'gray.100',
         color: 'gray.700',
-        fontFamily: 'Futura, Futura PT, system-font, Roboto, arial, san-serif',
+        fontFamily:
+          'futura-pt, Futura, Futura PT, system-font, Roboto, arial, san-serif',
         letterSpacing: '.025em',
         fontWeight: 300,
         overflowX: 'hidden',
@@ -59,12 +60,18 @@ const theme = extendTheme({
       baseStyle: {
         fontFamily: 'inherit',
         letterSpacing: '.025em',
+        fontWeight: 400,
       },
       variants: {
         Headline: {
           textTransform: 'uppercase',
           letterSpacing: '.1em',
         },
+      },
+    },
+    Text: {
+      baseStyle: {
+        fontWeight: 400,
       },
     },
     Button: {

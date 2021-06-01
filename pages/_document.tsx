@@ -17,6 +17,7 @@ StampedFn.init({ apiKey: 'pubkey-KqC64avS5g436V0hyv17FiKXHr2432', storeUrl: 'mut
 // ]]`,
             }}
           />
+          <link rel="stylesheet" href="https://use.typekit.net/sqd4kjb.css" />
         </Head>
         <body className="loading">
           <Main />

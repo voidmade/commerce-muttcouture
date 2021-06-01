@@ -5,7 +5,7 @@ import type {
 } from 'next'
 import { useRouter } from 'next/router'
 import { Layout } from '@components/common'
-import { ProductView } from '@components/product'
+import { ProductView, CollarView } from '@components/product'
 
 import { getConfig } from '@framework/api'
 import getProduct from '@framework/product/get-product'
@@ -60,11 +60,14 @@ export default function Slug({
   product,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
-
-  console.log('product', product)
+  const hasThickness = product.options?.find(
+    (opt: any) => opt.displayName === 'Thickness'
+  )
 
   return router.isFallback ? (
     <h1>Loading...</h1> // TODO (BC) Add Skeleton Views
+  ) : hasThickness ? (
+    <CollarView product={product as any} />
   ) : (
     <ProductView product={product as any} />
   )

@@ -62,7 +62,7 @@ const Navbar: FC = () => {
               ].map((item) => {
                 if (!item?.children) {
                   return (
-                    <Link href={item.href} passHref>
+                    <Link href={item.href} passHref key={item.label}>
                       <Button
                         as="a"
                         textTransform="uppercase"
@@ -76,7 +76,7 @@ const Navbar: FC = () => {
                   )
                 } else {
                   return (
-                    <Menu offset={[0, 22]}>
+                    <Menu offset={[0, 22]} key={item.label}>
                       <MenuButton
                         as={Button}
                         fontWeight="400"
@@ -121,7 +121,7 @@ const Navbar: FC = () => {
               </Box>
             </Link>
 
-            <HStack alignContent="end" justifyContent="end">
+            <HStack justifySelf="end" alignContent="end" justifyContent="end">
               <UserNav />
             </HStack>
           </Grid>
