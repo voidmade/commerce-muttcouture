@@ -25,6 +25,7 @@
     "@shopify/shopify-api": "^1.4.1",
     "@vercel/fetch": "^6.1.0",
     "autoprefixer": "^10.2.4",
+    "base-64": "^1.0.0",
     "body-scroll-lock": "^3.1.5",
     "bowser": "^2.11.0",
     "classnames": "^2.2.6",
