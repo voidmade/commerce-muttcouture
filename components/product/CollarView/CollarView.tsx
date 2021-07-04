@@ -40,6 +40,7 @@ import PageLayout from '@components/common/PageLayout'
 import ProductOptions from '@components/product/ProductOptions'
 import { AnimateSharedLayout } from 'framer-motion'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 interface Props {
   children?: any
   product: Product
@@ -252,6 +253,20 @@ const ProductView: FC<Props> = ({ product }) => {
           </TabList>
           <TabPanels>
             <TabPanel>
+              <Head>
+                <script
+                  type="text/javascript"
+                  src="https://cdn1.stamped.io/files/widget.min.js"
+                />
+                <script
+                  type="text/javascript"
+                  dangerouslySetInnerHTML={{
+                    __html: `//<![CDATA[ 
+StampedFn.init({ apiKey: 'pubkey-KqC64avS5g436V0hyv17FiKXHr2432', storeUrl: 'mutt-couture.myshopify.com' }); 
+// ]]`,
+                  }}
+                />
+              </Head>
               <Box
                 id="stamped-main-widget"
                 data-widget-style="standard"
