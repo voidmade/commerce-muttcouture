@@ -54,15 +54,6 @@ const config = new Config({
   customerCookie: SHOPIFY_CUSTOMER_TOKEN_COOKIE,
 })
 
-const adminConfig = new Config({
-  commerceUrl: ADMIN_API_URL,
-  apiToken: ADMIN_API_TOKEN!,
-})
-
-export function getAdminConfig(adminConfig?: Partial<ShopifyConfig>) {
-  return config.getConfig(adminConfig)
-}
-
 export function getConfig(userConfig?: Partial<ShopifyConfig>) {
   return config.getConfig(userConfig)
 }
