@@ -11,13 +11,11 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  useDisclosure,
 } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Searchbar, UserNav } from '@components/common'
+import { UserNav } from '@components/common'
 import NavbarRoot from './NavbarRoot'
 import Image from 'next/image'
-import { useCustomer } from '@framework/customer'
 
 const Navbar: FC = () => {
   return (
@@ -90,7 +88,7 @@ const Navbar: FC = () => {
                       <MenuList borderRadius="0">
                         <Container maxW="xl" paddingX="0">
                           {item.children.map((child) => (
-                            <MenuItem>
+                            <MenuItem key={child.href}>
                               <Link href={child.href}>
                                 <Button
                                   as="a"

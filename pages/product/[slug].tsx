@@ -11,7 +11,6 @@ import { getConfig } from '@framework/api'
 import getProduct from '@framework/product/get-product'
 import getAllPages from '@framework/common/get-all-pages'
 import getAllProductPaths from '@framework/product/get-all-product-paths'
-import PageLayout from '@components/common/PageLayout'
 
 export async function getStaticProps({
   params,

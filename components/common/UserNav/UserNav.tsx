@@ -22,7 +22,6 @@ const UserNav: FC<Props> = ({ className }) => {
   const { toggleSidebar, closeSidebarIfPresent, openModal } = useUI()
   const itemsCount = data?.lineItems.reduce(countItem, 0) ?? 0
 
-  console.log('customer', customer)
   return (
     <Box>
       <HStack>

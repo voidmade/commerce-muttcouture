@@ -2,8 +2,9 @@ import type { GetStaticPropsContext } from 'next'
 import { getConfig } from '@framework/api'
 import getAllPages from '@framework/common/get-all-pages'
 import useCustomer from '@framework/customer/use-customer'
-import { Layout } from '@components/common'
-import { Container, Text } from '@components/ui'
+import { Footer, Layout, Navbar } from '@components/common'
+import { Container, Text, Box, VStack, Button, Heading } from '@chakra-ui/react'
+import handleAcceptsMarketing from '@framework/api/customers/accepts-marketing'
 
 export async function getStaticProps({
   preview,
@@ -19,25 +20,54 @@ export async function getStaticProps({
 export default function Profile() {
   const { data } = useCustomer()
   return (
-    <Container>
-      <Text variant="pageHeading">My Profile</Text>
-      {data && (
-        <div className="grid lg:grid-cols-12">
-          <div className="lg:col-span-8 pr-4">
-            <div>
-              <Text variant="sectionHeading">Full Name</Text>
-              <span>
-                {data.firstName} {data.lastName}
-              </span>
-            </div>
-            <div className="mt-5">
-              <Text variant="sectionHeading">Email</Text>
-              <span>{data.email}</span>
-            </div>
-          </div>
-        </div>
-      )}
-    </Container>
+    <>
+      <Navbar />
+      <Container maxW="container.md" py={12}>
+        <VStack spacing={12} align="left" w="100%">
+          <Heading size="xl">My Profile</Heading>
+          {data && (
+            <VStack w="100%" spacing={12}>
+              <VStack w="100%" align="left">
+                <Box>
+                  <Heading size="md">Full Name</Heading>
+                  <Text fontSize="md">
+                    {data.firstName} {data.lastName}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size="md">Email</Heading>
+                  <Text fontSize="md">{data.email}</Text>
+                </Box>
+              </VStack>
+              <Box w="100%">
+                {data?.acceptsMarketing ? (
+                  <Button
+                    onClick={() => {
+                      handleAcceptsMarketing(data.email, false)
+                    }}
+                    variant="link"
+                    size="lg"
+                  >
+                    Leave the VIP List
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      handleAcceptsMarketing(data.email, true)
+                    }}
+                    variant="primary"
+                    size="lg"
+                  >
+                    Join the VIP List
+                  </Button>
+                )}
+              </Box>
+            </VStack>
+          )}
+        </VStack>
+      </Container>
+      <Footer />
+    </>
   )
 }
 

@@ -13,7 +13,8 @@ import { useUI } from '@components/ui/context'
 import { Modal, LoadingDots } from '@components/ui'
 import LoginView from '@components/auth/LoginView'
 import dynamic from 'next/dynamic'
-import { setCustomerVipStatus } from 'pages/api/shopify/setCustomerVipStatus'
+import handleAcceptsMarketing from '@framework/api/customers/accepts-marketing.js'
+import { useState } from 'react'
 
 const Loading = () => (
   <div className="w-80 h-80 flex items-center text-center justify-center p-3">
@@ -35,25 +36,11 @@ const ForgotPassword = dynamic(
   dynamicProps
 )
 
-async function handleSetCustomerVipStatus(id, customerEmail, boolean) {
-  const res = await fetch('/api/shopify/setCustomerVipStatus', {
-    method: 'POST',
-    body: JSON.stringify({
-      customerEmail: customerEmail,
-      vipStatus: boolean,
-      customerAccessToken: id,
-    }),
-  })
-
-  const data = await res.json()
-
-  console.log(data)
-  console.debug('customer status set to ', boolean)
-}
-
 const VipFence = ({ children }) => {
   const { data: customer } = useCustomer()
   const { modalView, displayModal, closeModal, openModal } = useUI()
+  const [isLoading, setIsLoading] = useState(false)
+
   if (!customer) {
     return (
       <Box py={32}>
@@ -118,58 +105,29 @@ const VipFence = ({ children }) => {
               this page.
             </Text>
             <Checkbox>Accept marketing emails and become a VIP</Checkbox>
-            {!customer && customer?.acceptsMarketing ? (
-              <Button
-                onClick={() => openModal()}
-                variant="primary"
-                size="lg"
-                w="100%"
-              >
-                Sign In {customer.acceptsMarketing}
-              </Button>
-            ) : (
-              <Button
-                onClick={() =>
-                  handleSetCustomerVipStatus(
-                    customer.id,
-                    customer.email,
-                    !customer.acceptsMarketing
-                  )
-                }
-                variant="primary"
-                size="lg"
-                w="100%"
-              >
-                Join the VIP List
-              </Button>
-            )}
+            <Button
+              onClick={() => {
+                setIsLoading(true)
+                handleAcceptsMarketing(
+                  customer.id,
+                  customer.email,
+                  !customer.acceptsMarketing
+                )
+              }}
+              variant="primary"
+              size="lg"
+              w="100%"
+              disabled={isLoading}
+            >
+              Join the Free VIP List Now
+            </Button>
             <Box>
               <Text>
                 First dibs on sales • Access to exclusive products • Behind the
                 scenes insights • Vote on new products
               </Text>
             </Box>
-            <Box fontSize="lg" bg="gray.200" p={8} w="100%">
-              <Text>Want to shop exclusive products?</Text>
-              <Text>
-                <Link href="/vip" passHref>
-                  <Box
-                    as="a"
-                    variant="link"
-                    textDecor="underline"
-                    _hover={{ textDecor: 'none' }}
-                  >
-                    Become a VIP for Free
-                  </Box>
-                </Link>
-              </Text>
-            </Box>
           </VStack>
-          <Modal open={displayModal} onClose={closeModal}>
-            {modalView === 'LOGIN_VIEW' && <LoginView />}
-            {modalView === 'SIGNUP_VIEW' && <SignUpView />}
-            {modalView === 'FORGOT_VIEW' && <ForgotPassword />}
-          </Modal>
         </Container>
       </Box>
     )

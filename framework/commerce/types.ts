@@ -95,7 +95,9 @@ export type Cart = {
 export interface Wishlist extends BCWishlist {}
 
 // TODO: Properly define this type
-export interface Customer extends BCCustomer {}
+export interface Customer extends BCCustomer {
+  acceptsMarketing?: any
+}
 
 // TODO: Properly define this type
 export interface SearchProductsData extends BCSearchProductsData {}
