@@ -14,6 +14,7 @@ import { Bag } from '@components/icons'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CloseIcon } from '@chakra-ui/icons'
+import { Swatch } from '@components/product'
 
 const MotionBox = motion(Box)
 const MotionVStack = motion(VStack)
@@ -28,7 +29,8 @@ export default function ProductOptions({
   lengths,
   addToCart,
   currentPriceFormatted,
-}) {
+  product,
+}: any) {
   const container = {
     exit: {
       opacity: 0,
@@ -72,7 +74,7 @@ export default function ProductOptions({
     },
   }
 
-  const measurementValues = {
+  const measurementValues: any = {
     '.75-Inch': {
       sm: '5.75 - 8',
       md: '8.75 - 11',
@@ -122,7 +124,7 @@ export default function ProductOptions({
             </HStack>
 
             {widths &&
-              widths.values.map((v, i: number) => {
+              widths.values.map((v: any, i: number) => {
                 const opt = widths
                 const currentWidthLabel = v.label
                 const activeWidth = (choices as any)[
@@ -164,7 +166,7 @@ export default function ProductOptions({
                       backgroundColor="white"
                       key={`${opt.id}-${i}`}
                       onClick={() => {
-                        setChoices((choices) => {
+                        setChoices((choices: any) => {
                           return {
                             ...choices,
                             [widths.displayName.toLowerCase()]: v.label.toLowerCase(),
@@ -204,7 +206,7 @@ export default function ProductOptions({
 
                       <HStack w="100%" padding="0 10px 10px">
                         {lengths &&
-                          lengths.values.map((length, i: number) => {
+                          lengths.values.map((length: any, i: number) => {
                             let buttonLabel = []
                             const activeLength = (choices as any)[
                               lengths.displayName.toLowerCase()
@@ -238,7 +240,7 @@ export default function ProductOptions({
                                     : 'tertiary'
                                 }
                                 onClick={() => {
-                                  setChoices((choices) => {
+                                  setChoices((choices: any) => {
                                     return {
                                       ...choices,
                                       [widths.displayName.toLowerCase()]: v.label.toLowerCase(),
@@ -266,11 +268,11 @@ export default function ProductOptions({
                 )
               })}
             {!widths?.values &&
-              product.options?.map((opt) => (
+              product.options?.map((opt: any) => (
                 <div className="pb-4" key={opt.displayName}>
                   <h2 className="uppercase font-medium">{opt.displayName}</h2>
                   <div className="flex flex-row py-4">
-                    {opt.values.map((v, i: number) => {
+                    {opt.values.map((v: any, i: number) => {
                       const active = (choices as any)[
                         opt.displayName.toLowerCase()
                       ]
@@ -283,7 +285,7 @@ export default function ProductOptions({
                           color={v.hexColors ? v.hexColors[0] : ''}
                           label={v.label}
                           onClick={() => {
-                            setChoices((choices) => {
+                            setChoices((choices: any) => {
                               return {
                                 ...choices,
                                 [opt.displayName.toLowerCase()]: v.label.toLowerCase(),

@@ -18,7 +18,7 @@ import {
 import { normalizeProduct } from '@framework/utils/normalize'
 import { Collection } from '@framework/schema'
 
-const CollectionView = ({ collection }) => {
+const CollectionView = ({ collection }: any) => {
   return (
     <VStack spacing={[16, 24, 36]}>
       <Container maxW="1400px">
@@ -35,7 +35,7 @@ const CollectionView = ({ collection }) => {
           >
             {collection?.products?.edges?.length &&
               collection.products.edges.length > 0 &&
-              collection.products.edges.map(({ node }, index: number) => {
+              collection.products.edges.map(({ node }: any, index: number) => {
                 const product = normalizeProduct(node) || {}
                 const image = product.images[0]
                 const isBig = index > 0 && index + (1 % 4) == 0

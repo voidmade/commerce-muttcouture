@@ -191,6 +191,8 @@ interface ProductImage {
 }
 
 interface ProductVariant2 {
+  name: any
+  price: ProductVariant2 | undefined
   id: string | number
   options: ProductOption[]
 }

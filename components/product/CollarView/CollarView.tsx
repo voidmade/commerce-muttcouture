@@ -34,7 +34,7 @@ import {
   TabPanels,
 } from '@chakra-ui/react'
 
-import base64 from 'base-64'
+import base64 from 'js-base64'
 
 import PageLayout from '@components/common/PageLayout'
 import ProductOptions from '@components/product/ProductOptions'
@@ -50,11 +50,7 @@ interface Props {
 const ProductView: FC<Props> = ({ product }) => {
   console.log('product', product)
   const router = useRouter()
-  const {
-    isModalOpen: isOpen,
-    onModalOpen: onOpen,
-    onModalClose: onClose,
-  } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const addItem = useAddItem()
   const price = {
     amount: product.price.value,
@@ -85,11 +81,13 @@ const ProductView: FC<Props> = ({ product }) => {
     if (!choices?.thickness) return
 
     const currentVariant = product.variants.find((v) =>
-      v.name.toLowerCase().includes((choices?.thickness).toLowerCase())
+      choices?.thickness
+        ? v?.name.toLowerCase().includes((choices?.thickness).toLowerCase())
+        : false
     )
     if (currentVariant && currentVariant?.price) {
       setCurrentPrice({
-        amount: currentVariant.price,
+        amount: parseInt(currentVariant.price.toString()),
         baseAmount: product.price.retailPrice,
         currencyCode: product.price.currencyCode!,
       })
@@ -271,7 +269,9 @@ StampedFn.init({ apiKey: 'pubkey-KqC64avS5g436V0hyv17FiKXHr2432', storeUrl: 'mut
                 id="stamped-main-widget"
                 data-widget-style="standard"
                 data-name={product.title}
-                data-product-id={base64.decode(product.id).replace(/\D+/g, '')}
+                data-product-id={base64
+                  .decode(product.id.toString())
+                  .replace(/\D+/g, '')}
                 data-url={router.asPath}
                 data-product-sku={product.handle}
                 data-product-type={product.type}
