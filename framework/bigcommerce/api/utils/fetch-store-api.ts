@@ -11,15 +11,7 @@ export default async function fetchStoreApi<T>(
   let res: Response
 
   try {
-    res = await fetch(config.storeApiUrl + endpoint, {
-      ...options,
-      headers: {
-        ...options?.headers,
-        'Content-Type': 'application/json',
-        'X-Auth-Token': config.storeApiToken,
-        'X-Auth-Client': config.storeApiClientId,
-      },
-    })
+    res = await fetch(config.storeApiUrl + endpoint)
   } catch (error) {
     throw new BigcommerceNetworkError(
       `Fetch to Bigcommerce failed: ${error.message}`

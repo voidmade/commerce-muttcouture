@@ -1,11 +1,23 @@
 import { GraphQLFetcherResult } from '@commerce/api'
 import { normalize } from 'node:path'
+import { Collection } from 'shopify-buy'
 import { getConfig, ShopifyConfig } from '../api'
 import {
   normalizeProduct,
   getProductQuery,
   getCollectionProductsQuery,
 } from '../utils'
+
+type Variables = {
+  id?: string
+  slug?: string
+  first?: number
+  imageCount?: number
+}
+
+type ReturnType = {
+  collection: Collection[]
+}
 
 const getProductByCollectionSlug = async (options: {
   variables: Variables

@@ -10,7 +10,7 @@ export interface CommerceAPIConfig {
   fetch<Data = any, Variables = any>(
     query: string,
     queryData?: CommerceAPIFetchOptions<Variables>,
-    fetchOptions?: RequestInit
+    fetchOptions?: any
   ): Promise<GraphQLFetcherResult<Data>>
 }
 
@@ -20,7 +20,7 @@ export type GraphQLFetcher<
 > = (
   query: string,
   queryData?: CommerceAPIFetchOptions<Variables>,
-  fetchOptions?: RequestInit
+  fetchOptions?: any
 ) => Promise<Data>
 
 export interface GraphQLFetcherResult<Data = any> {

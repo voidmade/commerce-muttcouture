@@ -8,7 +8,7 @@ export type GetSiteInfoResult<
   T extends { categories: any[]; brands: any[] } = {
     categories: Category[]
     brands: Brands
-    products: { edges: Product[] }
+    products?: { edges: Product[] }
   }
 > = T
 

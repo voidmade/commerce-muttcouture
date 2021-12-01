@@ -10,19 +10,7 @@ const fetchGraphqlApi: GraphQLFetcher = async (
 ) => {
   // log.warn(query)
   const config = getConfig()
-  const res = await fetch(config.commerceUrl + (preview ? '/preview' : ''), {
-    ...fetchOptions,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${config.apiToken}`,
-      ...fetchOptions?.headers,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  })
+  const res = await fetch(config.commerceUrl + (preview ? '/preview' : ''))
 
   const json = await res.json()
   if (json.errors) {
