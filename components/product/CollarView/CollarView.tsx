@@ -34,7 +34,7 @@ import {
   TabPanels,
 } from '@chakra-ui/react'
 
-import base64 from 'js-base64'
+import { decode } from 'js-base64'
 
 import PageLayout from '@components/common/PageLayout'
 import ProductOptions from '@components/product/ProductOptions'
@@ -134,10 +134,11 @@ const ProductView: FC<Props> = ({ product }) => {
                 flexShrink={0}
                 mb={[null, null, null, 8]}
               >
-                <AspectRatio ratio={4 / 3}>
+                <AspectRatio ratio={1}>
                   <Image
                     src={image.url!}
                     alt={image.alt || 'Product Image'}
+                    objectFit="cover"
                     layout="fill"
                     priority={i === 0}
                     quality="85"
@@ -269,9 +270,10 @@ StampedFn.init({ apiKey: 'pubkey-KqC64avS5g436V0hyv17FiKXHr2432', storeUrl: 'mut
                 id="stamped-main-widget"
                 data-widget-style="standard"
                 data-name={product.title}
-                data-product-id={base64
-                  .decode(product.id.toString())
-                  .replace(/\D+/g, '')}
+                data-product-id={decode(product.id.toString()).replace(
+                  /\D+/g,
+                  ''
+                )}
                 data-url={router.asPath}
                 data-product-sku={product.handle}
                 data-product-type={product.type}
